@@ -17,6 +17,15 @@ socket.on("updateHP", (data) => {
   console.log("HP updated:", data.hp);
 });
 
+socket.on("gameStart", (data) => {
+  console.log("Game started");
+});
+
+// Time heartbeat
+socket.on("timeUpdate", (data) => {
+  console.log("Time left: ", data.timeLeft);
+});
+
 // Listen for errors
 socket.on("error", (err) => {
   console.log("Error:", err);
@@ -27,8 +36,8 @@ socket.on("disconnect", () => {
   console.log("Disconnected from the server");
 });
 
-socket.on("opponentDisconnected", (message) => {
-  console.log("Opponent disconnected: ", message);
+socket.on("gameFinished", (data) => {
+  console.log("Game finished: ", data.result);
 });
 
 // Send a "correctGesture" event to the server
@@ -36,3 +45,9 @@ setTimeout(() => {
   console.log("Sending correct gesture...");
   socket.emit("correctGesture");
 }, 2000);
+
+// Simulates a "restart game" button click
+setTimeout(() => {
+  console.log("player ready.");
+  socket.emit("restartGame");
+}, 15000);
