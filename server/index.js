@@ -45,6 +45,51 @@ io.on("connection", (socket) => {
     console.log("Assigned to Player 2");
   }
 
+  // If both players are connected, start the game and countdown
+  if (players.player1 && players.player2) {
+    console.log("Both players are connected. Starting the 63-second timer...");
+    let timeLeft = 63; // Total game time
+    const gameInterval = setInterval(() => {
+      timeLeft--;
+
+      // Emit the current time left to both players
+      io.emit("timeUpdate", { timeLeft: timeLeft });
+
+      if (timeLeft <= 0) {
+        clearInterval(gameInterval);
+        // Notify players that the game is finished
+        // Determine game result based on player HP using the ternary operator
+        const player1Hp = players.player1.hp;
+        const player2Hp = players.player2.hp;
+
+        const resultPlayer1 =
+          player1Hp > player2Hp
+            ? "victory"
+            : player1Hp < player2Hp
+            ? "loss"
+            : "tie";
+        const resultPlayer2 =
+          player2Hp > player1Hp
+            ? "victory"
+            : player2Hp < player1Hp
+            ? "loss"
+            : "tie";
+
+        // Notify Player 1 of the result
+        io.to(players.player1.id).emit("gameFinished", {
+          result: resultPlayer1,
+        });
+
+        // Notify Player 2 of the result
+        io.to(players.player2.id).emit("gameFinished", {
+          result: resultPlayer2,
+        });
+
+        console.log("Game finished! Time's up.");
+      }
+    }, 1000); // Update every second
+  }
+
   // Handles hp updates
   socket.on("correctGesture", () => {
     if (
@@ -61,10 +106,10 @@ io.on("connection", (socket) => {
 
       // If Player 1 hp is 0, send victory or loss messages to both players
       if (players.player1.hp == 0) {
-        socket.emit("GameFinished", {
+        socket.emit("gameFinished", {
           result: "victory",
         });
-        socket.broadcast.emit("GameFinished", {
+        socket.broadcast.emit("gameFinished", {
           result: "loss",
         });
       }
@@ -82,10 +127,10 @@ io.on("connection", (socket) => {
 
       // If Player 1 hp is 0, send victory or loss messages to both players
       if (players.player1.hp == 0) {
-        socket.emit("GameFinished", {
+        socket.emit("gameFinished", {
           result: "victory",
         });
-        socket.broadcast.emit("GameFinished", {
+        socket.broadcast.emit("gameFinished", {
           result: "loss",
         });
       }
