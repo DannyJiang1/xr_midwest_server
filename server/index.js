@@ -11,7 +11,7 @@ let players = {
   player2: null,
 };
 
-const MAX_HP = 100;
+const MAX_HP = 10;
 const DAMAGE = 10;
 
 // Serve a simple endpoint to check if the server is running
@@ -103,6 +103,7 @@ io.on("connection", (socket) => {
         console.log("Game finished! Time's up.");
       }
     }, 1000); // Update every second
+    console.log(gameInterval);
   }
 
   // Handles hp updates
@@ -118,11 +119,10 @@ io.on("connection", (socket) => {
         hp: players.player2.hp,
       });
       console.log("Player 2 took damage from Player 1");
-
-      // If Player 1 hp is 0, send victory or loss messages to both players
-      if (players.player1.hp == 0) {
+      // If Player 2 hp is 0, send victory or loss messages to both players
+      if (players.player2.hp === 0) {
         clearInterval(gameInterval);
-        gameInterval = null; // Stops and clears the timer heartbeats
+        gameInterval = null;
         socket.emit("gameFinished", {
           result: "victory",
         });
@@ -145,7 +145,7 @@ io.on("connection", (socket) => {
       console.log("Player 1 took damage from Player 2");
 
       // If Player 1 hp is 0, send victory or loss messages to both players
-      if (players.player1.hp == 0) {
+      if (players.player1.hp === 0) {
         clearInterval(gameInterval);
         gameInterval = null; // Stops and clears the timer heartbeats
         socket.emit("gameFinished", {
@@ -176,6 +176,7 @@ io.on("connection", (socket) => {
         if (gameInterval) {
           clearInterval(gameInterval);
           gameInterval = null; // Set to null after clearing
+          players.player2.ready = false;
           socket.broadcast.emit("gameFinished", {
             result: "interrupt",
           });
@@ -190,6 +191,7 @@ io.on("connection", (socket) => {
         if (gameInterval) {
           clearInterval(gameInterval);
           gameInterval = null; // Set to null after clearing
+          players.player1.ready = false;
           socket.broadcast.emit("gameFinished", {
             result: "interrupt",
           });
@@ -261,6 +263,8 @@ io.on("connection", (socket) => {
             result: resultPlayer2,
           });
 
+          players.player1.ready = false;
+          players.player2.ready = false;
           console.log("Game finished! Time's up.");
         }
       }, 1000); // Update every second

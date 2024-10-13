@@ -41,10 +41,10 @@ socket.on("gameFinished", (data) => {
 });
 
 // Send a "correctGesture" event to the server
-setTimeout(() => {
-  console.log("Sending correct gesture...");
-  socket.emit("correctGesture");
-}, 2000);
+// setTimeout(() => {
+//   console.log("Sending correct gesture...");
+//   socket.emit("correctGesture");
+// }, 2000);
 
 // Simulates a "restart game" button click
 // setTimeout(() => {
