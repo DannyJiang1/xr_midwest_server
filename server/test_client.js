@@ -1,7 +1,7 @@
 const io = require("socket.io-client");
 
 // Connect to the server
-const socket = io("http://127.0.0.1:8080");
+const socket = io("http://172.20.10.4:8080");
 
 // Handle the connection event
 socket.on("connect", () => {
@@ -47,7 +47,7 @@ setTimeout(() => {
 }, 2000);
 
 // Simulates a "restart game" button click
-setTimeout(() => {
-  console.log("player ready.");
-  socket.emit("restartGame");
-}, 15000);
+// setTimeout(() => {
+//   console.log("player ready.");
+//   socket.emit("restartGame");
+// }, 15000);

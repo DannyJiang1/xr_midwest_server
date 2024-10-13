@@ -16,6 +16,7 @@ const DAMAGE = 10;
 
 // Serve a simple endpoint to check if the server is running
 app.get("/", (req, res) => {
+  console.log("Connection attempted");
   res.send("Server is running");
 });
 
@@ -267,7 +268,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const HOST = "127.0.0.1";
+const HOST = "0.0.0.0";
 const PORT = 8080;
 
 server.listen(PORT, HOST, () => {
